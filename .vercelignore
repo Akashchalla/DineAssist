@@ -15,3 +15,4 @@ dist
 output/*.mp4
 .streamlit
 run_demo.sh
+requirements.txt

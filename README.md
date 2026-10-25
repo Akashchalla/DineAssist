@@ -1,6 +1,6 @@
 # DineAssist — restaurant table monitor (Phases 1–4)
 
-**Public evaluation demo:** A browser-only version is available in `web/`, with Vercel configuration at the repository root. See [website setup and deployment](web/README.md). It includes an interactive sample floor plan and the saved detector video; it does not connect to a live camera.
+**[Open the public evaluation demo](https://dineassist-six.vercel.app)** — A browser-only version is available in `web/`, with Vercel configuration at the repository root. See [website setup and deployment](web/README.md). It includes an interactive sample floor plan and the saved detector video; it does not connect to a live camera.
 
 DineAssist watches a dining-room camera (or a recorded video), estimates whether
 each table is **free**, **occupied** or **needs cleaning**, times how long guests
