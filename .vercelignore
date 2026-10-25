@@ -1,0 +1,17 @@
+.git
+.venv
+.runtime
+__pycache__
+**/__pycache__
+*.pyc
+.env
+.env.*
+backend
+tests
+scripts
+models
+data
+dist
+output/*.mp4
+.streamlit
+run_demo.sh

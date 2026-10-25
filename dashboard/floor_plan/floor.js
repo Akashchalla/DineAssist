@@ -434,7 +434,7 @@ function createApp(root) {
   hud.innerHTML = `<div class="pill"><span class="led"></span><span class="txt"></span><span class="clock"></span></div>`;
   root.appendChild(hud);
   const legend = document.createElement("div"); legend.className = "legend";
-  legend.innerHTML = `<span><i style="background:#86C08F"></i>Free</span><span><i style="background:#E0656F"></i>Occupied</span>
+  legend.innerHTML = `<span><i style="background:#86C08F"></i>Available</span><span><i style="background:#E0656F"></i>Occupied</span>
     <span><i style="background:#E8B341"></i>Needs cleaning</span><span><i style="background:#7A6F64"></i>Not observed yet</span>
     <span class="who">Each guest is a live detection</span>`;
   root.appendChild(legend);

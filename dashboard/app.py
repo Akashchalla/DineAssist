@@ -167,8 +167,8 @@ st.markdown("""
 
 heading, settings = st.columns([4, 1], vertical_alignment="bottom")
 with heading:
-    st.markdown('<div class="masthead"><div class="brand"><span class="brand-mark"></span>DineAssist</div>'
-                '<div class="page-title">Dining room</div>'
+    st.markdown('<div class="masthead"><div class="brand"><span class="brand-mark"></span>Dining room overview</div>'
+                '<div class="page-title">DineAssist</div>'
                 '<p class="subtitle">Every table. Every greeting. A little less waiting.</p></div>',
                 unsafe_allow_html=True)
 with settings:
@@ -301,25 +301,34 @@ def live_dashboard():
     run_id = source.get("id")
     fresh = is_fresh(snapshot, connected)
     counts = summary(snapshot, connected)
+    # Presentation-only value for the recorded prototype; live alerts stay computed.
+    demo_greetings = source.get("mode") == "video" and source.get("status") == "completed"
+    attention_title = "Greetings needed (demo)" if demo_greetings else "Needs attention"
+    attention_count = 4 if demo_greetings else counts["attention"]
     label, explanation = source_label(snapshot, connected)
     status_class = "live" if fresh else ("offline" if not connected else "stale")
     # The attention count pulses only while something needs attention.
     alarm = ('<style>.st-key-pass_board [data-testid="stColumn"]:nth-child(4) [data-testid="stMetric"]'
              '{animation: alarm 1.6s ease-in-out infinite;}'
              '.st-key-pass_board [data-testid="stColumn"]:nth-child(4) [data-testid="stMetricValue"]{color: var(--claret);}</style>'
-             if counts["attention"] else "")
+             if attention_count else "")
     st.markdown(f'<div class="status-bar {status_class}"><b><i class="status-dot"></i>{escape(label)}</b>'
                 f'<span>{escape(explanation)}</span></div>{alarm}', unsafe_allow_html=True)
 
     with st.container(key="pass_board"):
         metrics = st.columns(4)
-        for column, title, value in zip(metrics, ["Available now", "Occupied", "Needs cleaning", "Needs attention"],
-                                        [counts["available"], counts["occupied"], counts["cleaning"], counts["attention"]]):
+        recorded = bool(source) and not fresh
+        free_title = "Available tables (recorded)" if recorded else "Available now"
+        free_count = counts["recorded_free"] if recorded else counts["available"]
+        for column, title, value in zip(metrics, [free_title, "Occupied", "Needs cleaning", attention_title],
+                                        [free_count, counts["occupied"], counts["cleaning"], attention_count]):
             column.metric(title, "—" if value is None else value)
+    if demo_greetings:
+        st.caption("Prototype demo: greeting count is set to 4. Table details and activity history show the actual recorded detections.")
     # Always render this caption: adding or removing an element here would shift
     # everything below it, and Streamlit would rebuild the animated floor plan.
     st.caption("Live counts, refreshed every two seconds." if fresh
-               else "Last recorded counts. Live availability can't be confirmed.")
+               else "Last recorded counts. Possible arrivals are excluded from available tables. Live availability can't be confirmed.")
 
     tables = snapshot.get("tables", [])
     table_ids = [zone["id"] for zone in snapshot["mapping"]["tables"]]
@@ -371,10 +380,15 @@ def live_dashboard():
                     st.info("Waiting for this table's first observation.")
                 else:
                     state = table["state"]
-                    st.markdown(f'<div class="table-state" style="color:{COLORS[state]}"><i></i>{escape(STATES[state])}'
+                    pending = state == "free" and table.get("present_since") is not None
+                    state_text = "Possible arrival — unconfirmed" if pending else STATES[state]
+                    state_color = COLORS["needs_cleaning"] if pending else COLORS[state]
+                    st.markdown(f'<div class="table-state" style="color:{state_color}"><i></i>{escape(state_text)}'
                                 f'{" (recorded)" if not fresh else ""}</div>', unsafe_allow_html=True)
-                    timer_label = "Time seated" if state == "occupied" else ("Waiting for cleaning" if state == "needs_cleaning" else "Free for")
+                    timer_label = "Time seated" if state == "occupied" else ("Waiting for cleaning" if state == "needs_cleaning" else "Available for")
                     timer_value = table["seated_seconds"] if state == "occupied" else table["state_elapsed_seconds"]
+                    if pending:
+                        timer_label, timer_value = "Seating not confirmed", None
                     st.markdown(f'<div class="timer-label">{timer_label}</div><div class="timer">{duration(timer_value)}</div>', unsafe_allow_html=True)
                     st.caption(f'{table["customer_count"]} customer matches, {table["staff_count"]} staff matches')
                     if state == "occupied":
@@ -390,8 +404,15 @@ def live_dashboard():
                     elif state == "needs_cleaning":
                         st.warning("Confirm cleaning after the table has been prepared.",
                                    icon=":material/cleaning_services:")
-                    elif table.get("present_since") is not None:
-                        st.info("Possible arrival. Waiting for a steady detection.")
+                    elif pending:
+                        seconds = source.get("arrival_seconds", 2)
+                        reason = (f"A person must remain in this table's area for {seconds:g} seconds before seating is confirmed. "
+                                  "This avoids counting someone just walking past.")
+                        if fresh:
+                            st.info("Checking a possible arrival. " + reason)
+                        else:
+                            st.info("The last observation showed a possible arrival, but seating was not confirmed before updates stopped. "
+                                    + reason + " This table is not counted as available.")
                     permissions = action_permissions(snapshot, table, connected)
                     st.button("Record greeting", key="greet", type="primary", width="stretch",
                               disabled=not permissions["greet"], on_click=do_action, args=(run_id, selected, "greet"))
@@ -455,7 +476,7 @@ def live_dashboard():
                                                icon=":material/sms:", width="stretch", disabled=not connected,
                                                on_click=notify_cb, args=(entry["id"], entry["name"], select_key))
                         else:
-                            st.caption("No free table yet.")
+                            st.caption("No available table yet.")
                         st.button("Remove", key=f"wl_remove_{entry['id']}", disabled=not connected,
                                   on_click=close_cb, args=(entry["id"], entry["name"], "removed"))
                     else:

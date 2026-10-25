@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="DineAssist helps restaurant teams see which tables need attention. Explore the interactive prototype and computer vision demo.">
+  <meta name="theme-color" content="#171310"><title>DineAssist — Every table. Every greeting.</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23171310'/%3E%3Ctext x='7' y='24' font-size='24' fill='%23f1e8da'%3ED%3C/text%3E%3C/svg%3E">
+  <link rel="stylesheet" href="style.css"><script type="module" src="app.js"></script>
+</head>
+<body>
+<div class="shell">
+  <header><div><div class="eyebrow">◉ YOUR DINING ROOM, AT A GLANCE</div><h1>DineAssist<span>.</span></h1><p class="tagline">Every table. Every greeting. A little less waiting.</p></div><a class="github" href="https://github.com/Akashchalla/DineAssist" target="_blank" rel="noopener">View project ↗</a></header>
+  <div class="notice"><span class="status-dot"></span><div><b>Interactive prototype</b><p>Explore a sample dining room. Service statuses are simulated; actions affect only this browser session. No live camera or real notifications are connected.</p></div><button id="reset" class="quiet">Reset demo ↺</button></div>
+  <section class="metrics" aria-label="Table summary">
+    <article class="metric green"><span>Available tables</span><strong id="available">—</strong></article>
+    <article class="metric red"><span>Occupied</span><strong id="occupied">—</strong></article>
+    <article class="metric amber"><span>Needs cleaning</span><strong id="cleaning">—</strong></article>
+    <article class="metric pink"><span>Greetings needed · demo</span><strong id="greetings">—</strong></article>
+  </section>
+  <nav aria-label="Sections"><button class="tab active" data-panel="floor" aria-pressed="true">Floor overview</button><button class="tab" data-panel="video" aria-pressed="false">Watch AI detection</button><button class="tab" data-panel="about" aria-pressed="false">How it works</button></nav>
+  <main>
+    <section id="floor" class="panel active">
+      <div class="workspace"><section class="card map-card"><div class="section-head"><h2>Floor map</h2><span class="subtle">14 mapped tables</span></div><p class="hint">Select a table to see its status and try a service action.</p><div id="map"></div><div id="table-buttons" class="table-buttons" aria-label="Select table"></div></section>
+      <aside><section class="card"><div class="eyebrow">TABLE DETAILS</div><h2 id="selected-name">Select a table</h2><div id="details"></div></section><section class="card"><h2>Service queue</h2><p class="hint">Tables needing a greeting or cleaning.</p><div id="queue"></div></section></aside></div>
+      <section class="card activity"><div class="section-head"><h2>Your demo activity</h2><span class="subtle">Resets on refresh</span></div><ol id="activity"><li>Select a table and try recording a greeting.</li></ol></section>
+    </section>
+    <section id="video" class="panel"><section class="card video-card"><div class="eyebrow">COMPUTER VISION IN ACTION</div><h2>From camera footage to table observations.</h2><p>This is the saved detector output from our AI-generated sample restaurant video. Boxes show detected people; outlines show manually mapped table zones. The interactive floor demo uses separate illustrative service statuses.</p><video id="recording" controls playsinline preload="metadata"><source src="assets/restaurant-output.mp4" type="video/mp4">Your browser cannot play this video.</video><p class="hint">Staff roles require manual identification. Person detection alone cannot confirm a greeting or a cleaned table.</p></section></section>
+    <section id="about" class="panel"><section class="card"><div class="eyebrow">LESS CHECKING. MORE CARING.</div><h2>A second pair of eyes for the restaurant team.</h2><p class="intro">A table sits uncleared. A guest waits for a greeting. A family waits at the door. DineAssist helps the team see where attention is needed next.</p><div class="steps"><article><span>01</span><h3>Map the room</h3><p>Draw table zones on a camera image using OpenCV.</p></article><article><span>02</span><h3>Track people</h3><p>YOLO detects people. Tracking connects observations across frames.</p></article><article><span>03</span><h3>Flag delays</h3><p>A state machine tracks occupancy, greeting timers, and cleaning needs.</p></article><article><span>04</span><h3>Help the team</h3><p>The dashboard brings table status and service actions together.</p></article></div><h3>Built with</h3><p class="tech">Python · OpenCV · YOLO · FastAPI · SQLite · Streamlit</p><p>The full local application supports video and RTSP input, manual staff labels, recorded events, a waitlist, and host-triggered phone notifications. This Vercel site is a standalone HTML/CSS/JavaScript evaluation demo, with no server or camera connection.</p><h3>What comes next</h3><p>Real restaurant testing, more reliable staff identification, and validated reporting on greeting delays and table turnaround. Predicting departure times and peak-hour reports are future work.</p></section></section>
+  </main><footer>Built by Akash · DineAssist <span>Prototype for evaluation</span></footer>
+  <div id="toast" role="status" aria-live="polite"></div>
+  <noscript><p>Please enable JavaScript to explore the interactive demo. The recorded video is available under Watch AI detection.</p></noscript>
+</div>
+</body></html>

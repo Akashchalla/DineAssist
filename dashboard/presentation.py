@@ -4,7 +4,7 @@ from datetime import datetime
 import math
 from zoneinfo import ZoneInfo
 
-STATES = {"free": "Free", "occupied": "Occupied", "needs_cleaning": "Needs cleaning"}
+STATES = {"free": "Available", "occupied": "Occupied", "needs_cleaning": "Needs cleaning"}
 # "After hours" palette: warm espresso surfaces, linen text, three state colors.
 COLORS = {"free": "#86C08F", "occupied": "#E0656F", "needs_cleaning": "#E8B341", "unknown": "#7A6F64"}
 # Map filter choices -> which tables stay bright.
@@ -13,7 +13,7 @@ FOCUS = {
     "Needs attention": lambda t: needs_attention(t),
     "Occupied": lambda t: t["state"] == "occupied",
     "Needs cleaning": lambda t: t["state"] == "needs_cleaning",
-    "Free": lambda t: t["state"] == "free",
+    "Available": lambda t: t["state"] == "free",
 }
 
 # Floor-plan scene, in scene units. Tables are placed inside the dining area,
@@ -69,6 +69,9 @@ def summary(snapshot, connected=True):
     tables = snapshot.get("tables", [])
     return {
         "available": sum(bool(t.get("available")) for t in tables) if is_fresh(snapshot, connected) else None,
+        "recorded_free": sum(t.get("observed", False) and t["state"] == "free"
+                             and not t.get("customer_count") and t.get("present_since") is None
+                             for t in tables),
         "occupied": sum(t["state"] == "occupied" for t in tables),
         "cleaning": sum(t["state"] == "needs_cleaning" for t in tables),
         "attention": sum(needs_attention(t) for t in tables),

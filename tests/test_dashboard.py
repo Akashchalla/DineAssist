@@ -48,6 +48,11 @@ class DashboardLogicTests(unittest.TestCase):
         self.assertTrue(action_permissions(data, data["tables"][0])["greet"])
         self.assertFalse(action_permissions(data, data["tables"][0])["label_staff"])
         self.assertIsNone(summary(data)["available"])
+        self.assertEqual(summary(data)["recorded_free"], 1)
+        data["tables"][1].update(customer_count=1, present_since=11)
+        self.assertEqual(summary(data)["recorded_free"], 0)
+        data["tables"][1].update(customer_count=0, present_since=None, observed=False)
+        self.assertEqual(summary(data)["recorded_free"], 0)
 
     def test_durations_and_floor_scene(self):
         self.assertEqual(duration(None), "—")
@@ -65,7 +70,7 @@ class DashboardLogicTests(unittest.TestCase):
         self.assertTrue(first["attention"])
         self.assertEqual(first["greeting"], "overdue")
         self.assertEqual(scene["status"], "live")
-        focused = floor_scene(data, None, focus="Free")
+        focused = floor_scene(data, None, focus="Available")
         self.assertEqual([t["dim"] for t in focused["tables"]], [True, False])
         data["source"].update(status="completed", fresh=False)
         self.assertEqual(floor_scene(data)["status"], "finished")
@@ -160,7 +165,8 @@ class DashboardUITests(unittest.TestCase):
         self.snapshot_mock.side_effect = APIError("Cannot reach the restaurant service.")
         self.run_app()
         self.assertTrue(self.app.error)
-        self.assertEqual(self.app.metric[0].value, "—")
+        self.assertEqual(self.app.metric[0].label, "Available tables (recorded)")
+        self.assertEqual(self.app.metric[0].value, "1")
         self.assertTrue(self.app.button(key="greet").disabled)
 
     def test_offline_initial_load_and_waiting_for_first_run(self):
