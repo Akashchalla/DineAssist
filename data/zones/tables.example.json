@@ -1,0 +1,10 @@
+{
+  "schema_version": 1,
+  "camera_id": "dining-room",
+  "created_at": "2026-10-24T00:00:00+00:00",
+  "frame_size": {"width": 1920, "height": 1080},
+  "coordinate_system": "original_frame_pixels",
+  "tables": [
+    {"id": "table_1", "polygon": [[200, 200], [600, 200], [600, 500], [200, 500]]}
+  ]
+}

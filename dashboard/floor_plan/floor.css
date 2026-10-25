@@ -1,0 +1,166 @@
+/* Tableflow floor plan. Rendered inside a shadow root, so these rules can't leak. */
+:host { display: block; }
+.tf-root {
+  --night: #171310; --walnut: #211B16; --rule: #3A3129; --linen: #F1E8DA; --smoke: #A99B8A;
+  --sage: #86C08F; --claret: #E0656F; --saffron: #E8B341; --ash: #7A6F64;
+  --ease: cubic-bezier(.2, .7, .2, 1);
+  position: relative; width: 100%; border-radius: 18px; overflow: hidden;
+  font-family: Archivo, system-ui, sans-serif; color: var(--linen);
+  background: #120E0B; box-shadow: 0 30px 60px -30px rgba(0,0,0,.8), inset 0 0 0 1px rgba(241,232,218,.06);
+  user-select: none; -webkit-user-select: none;
+}
+svg.scene { display: block; width: 100%; height: auto; }
+
+/* Whole-scene mood: frozen data desaturates the room and stops idle motion. */
+.floor-layer { transition: filter .9s var(--ease); }
+.tf-root.paused .floor-layer { filter: saturate(.55) brightness(.82); }
+.tf-root.paused .body, .tf-root.paused .head, .tf-root.paused .candle-glow,
+.tf-root.paused .pool.lit, .tf-root.paused .chat { animation-play-state: paused; }
+
+/* ---------- Tables ---------- */
+.table { cursor: pointer; outline: none; transition: opacity .6s var(--ease); }
+.enter-wrap.enter { transform-box: fill-box; transform-origin: center;
+  animation: table-in .8s var(--ease) both; animation-delay: var(--d, 0s); }
+.room-label { fill: var(--smoke); font-size: 11px; font-weight: 600; opacity: .75; letter-spacing: .02em; }
+@keyframes table-in { from { opacity: 0; transform: translateY(10px) scale(.94); } to { opacity: 1; transform: none; } }
+.table .lift { transition: transform .35s var(--ease); transform-box: fill-box; transform-origin: center; }
+.table:hover .lift, .table:focus-visible .lift { transform: translateY(-3px) scale(1.025); }
+.table.dim, .crowd.dim, .chip.dim { opacity: .2; }
+.crowd, .chip { transition: opacity .6s var(--ease); }
+
+.halo { fill: var(--c); fill-opacity: .1; stroke: var(--c); stroke-opacity: 0; stroke-width: 1.8;
+  transition: fill .8s var(--ease), stroke .8s var(--ease), fill-opacity .8s, stroke-opacity .4s; }
+.table.attention .halo { stroke-opacity: .55; }
+.table:hover .halo, .table:focus-visible .halo, .table.selected .halo { fill-opacity: .18; stroke-opacity: .95; }
+.s-unknown .halo { stroke-opacity: .45; }
+.s-free { --c: var(--sage); }
+.s-occupied { --c: var(--claret); }
+.s-needs_cleaning { --c: var(--saffron); }
+.s-unknown { --c: var(--ash); }
+.s-unknown .halo { stroke-dasharray: 5 6; }
+.s-free .halo { animation: free-breathe 4.5s ease-in-out infinite; }
+@keyframes free-breathe { 50% { fill-opacity: .14; } }
+
+/* Selection: marching outline. */
+.select-ring { fill: none; stroke: var(--linen); stroke-width: 2; stroke-dasharray: 8 7; opacity: 0;
+  transition: opacity .3s; }
+.table.selected .select-ring { opacity: .95; animation: march 1.2s linear infinite; }
+@keyframes march { to { stroke-dashoffset: -30; } }
+
+/* Attention: expanding sonar ring. */
+.sonar { fill: none; stroke: var(--c); stroke-width: 3; opacity: 0; transform-box: fill-box; transform-origin: center; }
+.table.attention .sonar { animation: sonar 2s ease-out infinite; }
+.table.attention .sonar.two { animation-delay: 1s; }
+@keyframes sonar { 0% { opacity: .8; transform: scale(.9); } 100% { opacity: 0; transform: scale(1.22); } }
+
+/* Place settings: food on plates only while seated; mess while dirty. */
+.food, .mess, .napkin { transition: opacity .7s var(--ease); }
+.food { opacity: 0; } .mess { opacity: 0; }
+.setting.served .food { opacity: 1; }
+.s-needs_cleaning .mess { opacity: 1; }
+.s-needs_cleaning .napkin { opacity: 0; }
+.s-needs_cleaning .plate { transform: translate(var(--mx), var(--my)) rotate(14deg); }
+.plate { transition: transform .8s var(--ease); transform-box: fill-box; transform-origin: center; }
+
+.candle-glow { opacity: .25; transition: opacity .8s; transform-box: fill-box; transform-origin: center; }
+.s-occupied .candle-glow { opacity: 1; animation: flicker 2.6s ease-in-out infinite; }
+@keyframes flicker { 0%,100% { transform: scale(1); opacity: .95; } 30% { transform: scale(1.12); opacity: .75; }
+  55% { transform: scale(.94); opacity: 1; } 80% { transform: scale(1.06); opacity: .82; } }
+
+.sparkles { opacity: 0; transition: opacity .5s; }
+.s-needs_cleaning .sparkles { opacity: 1; }
+.sparkle { transform-box: fill-box; transform-origin: center; animation: twinkle 1.6s ease-in-out infinite; }
+.sparkle:nth-child(2) { animation-delay: .5s; } .sparkle:nth-child(3) { animation-delay: 1s; }
+@keyframes twinkle { 0%,100% { transform: scale(.4) rotate(0); opacity: .2; } 50% { transform: scale(1) rotate(45deg); opacity: 1; } }
+
+/* Cleaned: a short burst when a dirty table turns free. */
+.burst circle { fill: var(--sage); transform-box: fill-box; transform-origin: center; }
+.burst.go circle { animation: burst .9s var(--ease) forwards; }
+@keyframes burst { from { opacity: 1; transform: translate(0,0) scale(1); }
+  to { opacity: 0; transform: translate(var(--bx), var(--by)) scale(.3); } }
+
+/* Pendant-light pools over each table. */
+.pool { opacity: .5; transition: opacity 1s; }
+.pool.lit { opacity: 1; animation: pool 6s ease-in-out infinite; }
+@keyframes pool { 50% { opacity: .82; } }
+
+/* ---------- People ---------- */
+.walker { will-change: transform; }
+.orient { transition: transform .45s var(--ease); }
+.body { transform-box: fill-box; transform-origin: center; animation: breathe var(--br, 4s) ease-in-out infinite;
+  animation-delay: var(--bd, 0s); }
+@keyframes breathe { 50% { transform: scale(1.035); } }
+.head { transform-box: fill-box; transform-origin: 50% 70%; animation: look var(--lk, 9s) ease-in-out infinite;
+  animation-delay: var(--ld, 0s); }
+@keyframes look { 0%, 18%, 100% { transform: rotate(0); } 24%, 40% { transform: rotate(-14deg); }
+  48%, 62% { transform: rotate(10deg); } 70% { transform: rotate(0); } }
+.walker.walking .body { animation: stride .5s ease-in-out infinite; }
+.walker.walking .arm-l { animation: swing .5s ease-in-out infinite; }
+.walker.walking .arm-r { animation: swing .5s ease-in-out infinite reverse; }
+.arm-l, .arm-r { transform-box: fill-box; transform-origin: 50% 85%; }
+@keyframes stride { 50% { transform: scale(1.04, .97); } }
+@keyframes swing { 0%,100% { transform: rotate(-16deg); } 50% { transform: rotate(16deg); } }
+.walker.pop { animation: pop .55s var(--ease) both; }
+@keyframes pop { from { opacity: 0; } to { opacity: 1; } }
+.walker.waiting .body { animation: wait 1.4s ease-in-out infinite; }
+@keyframes wait { 50% { transform: translateY(-1.5px); } }
+.walker.leaving { transition: opacity .5s .3s; }
+
+/* Conversation bubbles at occupied tables. */
+.chat { opacity: 0; animation: chat var(--ct, 7s) ease-in-out infinite; animation-delay: var(--cd, 0s);
+  transform-box: fill-box; transform-origin: 0% 100%; }
+@keyframes chat { 0%, 70%, 100% { opacity: 0; transform: scale(.6); } 76%, 92% { opacity: 1; transform: scale(1); } }
+.chat .dot { animation: typing 1s ease-in-out infinite; }
+.chat .dot:nth-child(3) { animation-delay: .15s; } .chat .dot:nth-child(4) { animation-delay: .3s; }
+@keyframes typing { 50% { opacity: .3; } }
+
+/* ---------- Chips above tables ---------- */
+.chip { pointer-events: none; }
+.chip rect.bg { fill: rgba(23,19,16,.86); stroke: rgba(241,232,218,.14); transition: fill .5s, stroke .5s; }
+.chip text { font-family: Archivo, system-ui, sans-serif; fill: var(--linen); font-size: 12px; font-weight: 650; }
+.chip .label { font-variation-settings: "wdth" 110; }
+.chip .timer { font-variation-settings: "wdth" 75; font-variant-numeric: tabular-nums; fill: var(--smoke); font-weight: 600; }
+.chip .dot { fill: var(--c); transition: fill .6s; }
+.chip.alert rect.bg { fill: var(--c); stroke: transparent; }
+.chip.alert text, .chip.alert .timer { fill: #1B1310; }
+.chip.alert .dot { fill: #1B1310; }
+.chip .inner { transform-box: fill-box; transform-origin: center bottom; }
+.chip.alert .inner { animation: nudge 1.8s var(--ease) infinite; }
+@keyframes nudge { 0%, 60%, 100% { transform: translateY(0); } 70% { transform: translateY(-4px); } 80% { transform: translateY(0); } 88% { transform: translateY(-2px); } }
+.chip .timer.tick { animation: tick .45s var(--ease); }
+@keyframes tick { from { opacity: .2; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+.chip .timer { transform-box: fill-box; }
+
+/* ---------- Heads-up overlay ---------- */
+.hud { position: absolute; inset: 0; pointer-events: none; }
+.pill { position: absolute; left: 16px; top: 14px; display: flex; align-items: center; gap: 10px;
+  padding: 8px 14px 8px 12px; border-radius: 999px; font-size: 13px; font-weight: 650;
+  background: rgba(23,19,16,.72); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(241,232,218,.12); }
+.pill .led { width: 9px; height: 9px; border-radius: 50%; background: var(--ash); }
+.pill.live .led { background: var(--sage); animation: led 2s ease-in-out infinite; }
+.pill.finished .led, .pill.stale .led { background: var(--saffron); }
+.pill.offline .led { background: var(--claret); }
+@keyframes led { 0%, 100% { box-shadow: 0 0 0 0 rgba(134,192,143,.6); } 50% { box-shadow: 0 0 0 8px rgba(134,192,143,0); } }
+.pill .clock { color: var(--smoke); font-weight: 600; font-variation-settings: "wdth" 80; font-variant-numeric: tabular-nums; }
+.legend { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 18px; padding: 12px 18px;
+  background: #15110E; border-top: 1px solid rgba(241,232,218,.07); }
+.legend span { display: inline-flex; align-items: center; gap: 7px; font-size: 12.5px; color: var(--linen); }
+.legend i { width: 9px; height: 9px; border-radius: 50%; }
+.legend .who { margin-left: auto; color: var(--smoke); }
+
+.tip { position: absolute; z-index: 2; min-width: 190px; padding: 12px 14px; border-radius: 14px; pointer-events: none;
+  background: rgba(30,24,20,.92); border: 1px solid rgba(241,232,218,.14); backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px); box-shadow: 0 18px 40px -18px rgba(0,0,0,.9);
+  opacity: 0; transform: translateY(6px) scale(.98); transition: opacity .18s, transform .22s var(--ease); }
+.tip.show { opacity: 1; transform: none; }
+.tip b { display: block; font-size: 15px; margin-bottom: 4px; font-variation-settings: "wdth" 110; }
+.tip .st { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 650; color: var(--c); }
+.tip .st i { width: 8px; height: 8px; border-radius: 50%; background: var(--c); }
+.tip .row { font-size: 12.5px; color: var(--smoke); margin-top: 5px; }
+.tip .hint { font-size: 11.5px; color: var(--smoke); opacity: .8; margin-top: 8px; }
+
+@media (max-width: 640px) { .legend .who { display: none; } .pill { font-size: 12px; padding: 6px 10px; } }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}

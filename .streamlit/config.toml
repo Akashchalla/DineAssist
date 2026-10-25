@@ -1,0 +1,31 @@
+[theme]
+# "After hours" dark theme: warm espresso surfaces and linen text.
+base = "dark"
+primaryColor = "#F1E8DA"
+backgroundColor = "#171310"
+secondaryBackgroundColor = "#2B241E"
+textColor = "#F1E8DA"
+borderColor = "#3A3129"
+baseRadius = "10px"
+# Archivo (SIL Open Font License) is bundled in dashboard/static/fonts, so the page works offline.
+font = "Archivo, sans-serif"
+headingFont = "Archivo, sans-serif"
+
+[[theme.fontFaces]]
+family = "Archivo"
+url = "app/static/fonts/archivo-latin-wdth-normal.woff2"
+weight = "100 900"
+style = "normal"
+
+[browser]
+gatherUsageStats = false
+
+[client]
+# Hide the Deploy button; this dashboard runs on this computer only.
+toolbarMode = "minimal"
+
+[server]
+address = "127.0.0.1"
+port = 8501
+headless = true
+enableStaticServing = true
