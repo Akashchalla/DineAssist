@@ -188,7 +188,7 @@ def run(args):
         print("Loading YOLO. The first run may download the model weights (the AI's learned parameters).", flush=True)
         model = YOLO(str(args.model))
         if model.names.get(0) != "person":
-            raise ValueError("Choose a COCO detection model with person as class 0, such as yolo11n.pt.")
+            raise ValueError("Choose a COCO detection model with person as class 0, such as yolo26n.pt.")
         fps = capture.get(cv2.CAP_PROP_FPS)
         fps = fps if math.isfinite(fps) and fps > 0 else 25.0
         expected_frames = capture.get(cv2.CAP_PROP_FRAME_COUNT)
@@ -275,8 +275,9 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--source", default=os.environ.get("CAMERA_SOURCE", str(ROOT / "data/videos/restaurant.mp4")))
     parser.add_argument("--zones", type=Path, default=ROOT / "data/zones/tables.json")
-    parser.add_argument("--model", type=Path, default=ROOT / "models/yolo11n.pt")
-    parser.add_argument("--confidence", type=float, default=0.35, help="Minimum person confidence (default: 0.35).")
+    parser.add_argument("--model", type=Path, default=ROOT / "models/yolo26n.pt",
+                        help="Detection weights (default: YOLO26 nano, released by Ultralytics in January 2026).")
+    parser.add_argument("--confidence", type=float, default=0.25, help="Minimum person confidence (default: 0.25, tuned for YOLO26).")
     parser.add_argument("--overlap", type=float, default=0.15, help="Minimum fraction of a person's box inside a zone.")
     parser.add_argument("--image-size", type=int, default=960,
                         help="YOLO inference size, a multiple of 32 (default: 960; 640 is faster but misses small or distant people).")

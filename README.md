@@ -221,7 +221,7 @@ Video / RTSP camera
        |
        +-- Phase 1: frozen frame -> manual polygons -> JSON map
        |
-       +-- Phase 2: continuous frames + map -> YOLO person detection / tracking
+       +-- Phase 2: continuous frames + map -> YOLO26 person detection / tracking
                        |
                   Phase 3: per-table state and timers -> SQLite event history
                        |                              -> console alerts
@@ -258,7 +258,7 @@ one image at a time, asks YOLO to find people, and compares their boxes with you
 table outlines. We need this step to turn pictures into observations that the
 state machine can use in Phase 3. Your saved table map is only read, never edited.
 
-The detector uses the small pretrained `yolo11n.pt` model. **Pretrained** means it
+The detector uses the small pretrained **YOLO26** nano model (`yolo26n.pt`), released by Ultralytics on January 14, 2026 (Ultralytics 8.4.0). YOLO26 is built for edge devices and removes the separate duplicate-box filtering step (NMS), which made it about 15% faster than YOLO11 in our CPU test on the sample video. The previous `yolo11n.pt` still works with `--model models/yolo11n.pt`. **Pretrained** means it
 has already learned to recognize common objects; we request only the person
 category. Its learned parameters, called **weights**, download on first use into
 `models/`. ByteTrack links detections across images and assigns temporary numbers
@@ -366,7 +366,7 @@ slow for your machine, use `--image-size 640` or try `--device mps`.
   speed or low-latency RTSP buffering. A dropped camera connection stops with an
   error instead of treating tables as empty; reconnect and restart manually.
 - A first-run download error means the model weights could not be obtained.
-  Check Internet access and rerun. Later runs reuse `models/yolo11n.pt` offline.
+  Check Internet access and rerun. Later runs reuse `models/yolo26n.pt` offline.
 - `Video size differs from the saved map` means the image dimensions changed.
   Use the original source settings or create a matching map; don't hand-edit
   the recorded dimensions to hide the mismatch.

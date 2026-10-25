@@ -173,6 +173,8 @@ with heading:
                 unsafe_allow_html=True)
 with settings:
     auto_refresh = st.toggle("Live updates", value=True, help="Fetch the latest table data every two seconds.")
+    st.link_button("✦ Ask DineAssist", "https://dineassist-six.vercel.app/#assistant",
+                   help="Opens the public demo assistant. It uses the website's demo tables, not this local recording.")
 
 
 def choose_table(table_id):

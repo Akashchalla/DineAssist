@@ -1,6 +1,6 @@
 import {mkdir, copyFile, readFile, writeFile} from 'node:fs/promises';
 await mkdir('dist/assets', {recursive:true});
-for (const name of ['index.html','app.js','style.css','demo.json']) await copyFile(`web/${name}`,`dist/${name}`);
+for (const name of ['index.html','app.js','style.css','demo.json','assistant.js','assistant-data.js']) await copyFile(`web/${name}`,`dist/${name}`);
 await copyFile('dashboard/floor_plan/floor.css','dist/assets/floor.css');
 const floor = (await readFile('dashboard/floor_plan/floor.js','utf8'))
   .replace('Each guest is a live detection', 'Illustrative service scenario')

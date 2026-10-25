@@ -4,6 +4,7 @@
   "installCommand": "node -e \"console.log('Static demo: no dependencies to install')\"",
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
+  "functions": {"api/chat.js": {"maxDuration": 60}},
   "headers": [{"source": "/(.*)", "headers": [
     {"key": "X-Content-Type-Options", "value": "nosniff"},
     {"key": "Referrer-Policy", "value": "strict-origin-when-cross-origin"}

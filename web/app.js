@@ -1,6 +1,8 @@
 import {createApp} from './assets/floor.js';
+import {initAssistant} from './assistant.js';
 const $=id=>document.getElementById(id);
 let original, scene, selected, floor, activities=[], toastTimer;
+initAssistant(()=>scene);
 const names={free:'Available',occupied:'Occupied',needs_cleaning:'Needs cleaning'};
 const host=$('map').attachShadow({mode:'open'});
 host.innerHTML='<link rel="stylesheet" href="assets/floor.css"><style>.tf-root.paused .floor-layer{filter:none}.tf-root{min-height:340px}@media(max-width:600px){.tf-root{min-height:290px}.legend{font-size:9px;gap:8px}.who{display:none}}</style><div class="tf-root"></div>';
@@ -32,6 +34,7 @@ function render(){
  if(!queue.length){const p=document.createElement('p');p.className='empty';p.textContent='All caught up in this demo.';$('queue').append(p)}
  else for(const t of queue){const b=actionButton(`${t.name} · ${t.state==='needs_cleaning'?'Clean table':'Greeting needed'}`,()=>select(t.id));b.className='queue-item';$('queue').append(b)}
  $('activity').replaceChildren(...(activities.length?activities:['Select a table and try recording a greeting.']).map(text=>{const li=document.createElement('li');li.textContent=text;return li}));
+ document.dispatchEvent(new Event('dineassist:updated'));
 }
 for(const b of document.querySelectorAll('[data-panel]'))b.onclick=()=>{
  for(const tab of document.querySelectorAll('[data-panel]')){tab.classList.toggle('active',tab===b);tab.setAttribute('aria-pressed',String(tab===b))}
@@ -39,6 +42,7 @@ for(const b of document.querySelectorAll('[data-panel]'))b.onclick=()=>{
  if(b.dataset.panel!=='video')$('recording').pause();
 };
 $('reset').disabled=true;
+if(location.hash==='#assistant')document.querySelector('[data-panel="assistant"]').click();
 try{
  const response=await fetch('demo.json');if(!response.ok)throw new Error('Could not load demo');original=await response.json();
  scene=structuredClone(original);selected=scene.tables[0].id;floor=createApp(host.querySelector('.tf-root'));floor.setTrigger=(_,id)=>select(id);render();

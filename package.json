@@ -3,5 +3,5 @@
   "private": true,
   "type": "module",
   "version": "1.0.0",
-  "scripts": {"build": "node web/build.mjs"}
+  "scripts": {"build": "node web/build.mjs", "preview": "node web/serve.mjs", "test": "node --test tests/test_chat.mjs"}
 }
