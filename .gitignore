@@ -16,3 +16,4 @@ models/
 data/output/
 .runtime/
 data/*.sqlite3*
+output/restaurant_output.mp4
