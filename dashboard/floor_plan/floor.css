@@ -1,4 +1,4 @@
-/* Tableflow floor plan. Rendered inside a shadow root, so these rules can't leak. */
+/* DineAssist floor plan. Rendered inside a shadow root, so these rules can't leak. */
 :host { display: block; }
 .tf-root {
   --night: #171310; --walnut: #211B16; --rule: #3A3129; --linen: #F1E8DA; --smoke: #A99B8A;

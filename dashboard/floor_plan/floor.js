@@ -1,4 +1,4 @@
-// Tableflow animated floor plan (Streamlit components v2).
+// DineAssist animated floor plan (Streamlit components v2).
 // Streamlit calls the default export again with new data on every refresh; the
 // scene is built once and then updated in place so animations keep running.
 
@@ -516,9 +516,9 @@ export default function (component) {
   const { data, parentElement, setTriggerValue } = component;
   const root = parentElement.querySelector(".tf-root");
   if (!root || !data) return;
-  let app = root.__tableflow;
-  if (!app) { app = createApp(root); root.__tableflow = app; }
+  let app = root.__dineassist;
+  if (!app) { app = createApp(root); root.__dineassist = app; }
   app.setTrigger = setTriggerValue;
   app.update(data);
-  return () => { app.destroy(); delete root.__tableflow; };
+  return () => { app.destroy(); delete root.__dineassist; };
 }

@@ -50,7 +50,7 @@ class WaitlistTests(unittest.TestCase):
         server, topic, title, message = self.sent[0]
         self.assertEqual(title, "Table 3 is ready")
         self.assertIn("Hi Akash, table 3 is ready for your party of 2", message)
-        self.assertTrue(topic.startswith("tableflow-"))
+        self.assertTrue(topic.startswith("dineassist-"))
         # The table is now held: a second party can't be texted for it.
         other = self.add("Maya", 4)
         clash = self.client.post(f"/api/waitlist/{other}/notify", json={"table_id": "table_3"})

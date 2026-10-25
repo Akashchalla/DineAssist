@@ -86,7 +86,7 @@ def create_app(database=None, zones=None, clock=None, sender=None):
                 await task
             app.state.store.close()
 
-    app = FastAPI(title="Restaurant Table Monitor", version="0.3.0", lifespan=lifespan,
+    app = FastAPI(title="DineAssist", version="0.3.0", lifespan=lifespan,
                   description="Local learning prototype. Run on 127.0.0.1 with one worker. Staff labels are manual and scoped to a run.")
 
     @app.exception_handler(Conflict)

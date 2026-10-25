@@ -1,6 +1,6 @@
-# Tableflow — restaurant table monitor (Phases 1–4)
+# DineAssist — restaurant table monitor (Phases 1–4)
 
-Tableflow watches a dining-room camera (or a recorded video), estimates whether
+DineAssist watches a dining-room camera (or a recorded video), estimates whether
 each table is **free**, **occupied** or **needs cleaning**, times how long guests
 have waited for a greeting, and shows it all on a host-stand dashboard.
 
@@ -667,7 +667,7 @@ there's no account or phone-number setup:
 
 1. Install the free **ntfy** app on your phone (App Store or Google Play).
 2. On the dashboard, open **Get these messages on your phone** in the Waitlist panel
-   and copy the topic name (it looks like `tableflow-5e6423b40f`).
+   and copy the topic name (it looks like `dineassist-5e6423b40f`).
 3. In the app, tap **+** and subscribe to that topic. Leave the server as `ntfy.sh`.
 
 The topic is created once and saved in the database. Anyone who knows a topic name

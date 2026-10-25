@@ -26,7 +26,7 @@ API_URL = os.environ.get("RESTAURANT_API_URL", "http://127.0.0.1:8000").rstrip("
 TIMEZONE = os.environ.get("RESTAURANT_TIMEZONE", "America/New_York")
 client = APIClient(API_URL)
 
-st.set_page_config(page_title="Tableflow · Dining room", page_icon="◉", layout="wide", initial_sidebar_state="collapsed")
+st.set_page_config(page_title="DineAssist · Dining room", page_icon="◉", layout="wide", initial_sidebar_state="collapsed")
 # Colors and fonts come from .streamlit/config.toml; this block adds layout and motion.
 st.markdown("""
 <style>
@@ -167,7 +167,7 @@ st.markdown("""
 
 heading, settings = st.columns([4, 1], vertical_alignment="bottom")
 with heading:
-    st.markdown('<div class="masthead"><div class="brand"><span class="brand-mark"></span>Tableflow</div>'
+    st.markdown('<div class="masthead"><div class="brand"><span class="brand-mark"></span>DineAssist</div>'
                 '<div class="page-title">Dining room</div>'
                 '<p class="subtitle">Every table. Every greeting. A little less waiting.</p></div>',
                 unsafe_allow_html=True)
@@ -543,7 +543,7 @@ def live_dashboard():
             writer.writeheader()
             for row in event_rows:
                 writer.writerow({key: "'" + value if value.startswith(("=", "+", "-", "@")) else value for key, value in row.items()})
-            st.download_button("Download displayed events", output.getvalue(), file_name="tableflow-events.csv", mime="text/csv", key="export_events")
+            st.download_button("Download displayed events", output.getvalue(), file_name="dineassist-events.csv", mime="text/csv", key="export_events")
         else:
             st.info("No events in this category yet.")
         st.caption("This is an event log, not a historical peak-hour report. Video replay timestamps must not be treated as restaurant operating hours.")

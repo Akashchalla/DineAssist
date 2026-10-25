@@ -114,7 +114,7 @@ class DashboardUITests(unittest.TestCase):
         self.staff_patch = patch.object(APIClient, "staff", return_value={})
         self.staff_mock = self.staff_patch.start()
         self.addCleanup(self.staff_patch.stop)
-        self.waitlist = {"topic": "tableflow-test", "server": "https://ntfy.sh", "entries": []}
+        self.waitlist = {"topic": "dineassist-test", "server": "https://ntfy.sh", "entries": []}
         for name, kwargs in {"waitlist": {"side_effect": lambda: deepcopy(self.waitlist)},
                              "add_party": {"return_value": {}}, "notify_party": {"return_value": {}},
                              "close_party": {"return_value": {}}}.items():

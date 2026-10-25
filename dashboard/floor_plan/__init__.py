@@ -20,5 +20,5 @@ def floor_plan(scene, *, key="floor_plan", on_select=None):
     # Register on every call: Streamlit 1.65 keeps registrations per runtime (a new
     # runtime would otherwise see "not registered"), and an identical
     # re-registration is silent and cheap.
-    component = st.components.v2.component("tableflow_floor_plan", html=_HTML, css=_CSS, js=_JS)
+    component = st.components.v2.component("dineassist_floor_plan", html=_HTML, css=_CSS, js=_JS)
     return component(key=key, data=scene, on_select_change=on_select or (lambda: None))

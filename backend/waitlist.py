@@ -49,7 +49,7 @@ class Waitlist:
             """)
             if not topic:
                 row = store.db.execute("SELECT value FROM settings WHERE key='ntfy_topic'").fetchone()
-                topic = row[0] if row else f"tableflow-{secrets.token_hex(5)}"
+                topic = row[0] if row else f"dineassist-{secrets.token_hex(5)}"
                 store.db.execute("INSERT OR IGNORE INTO settings VALUES ('ntfy_topic', ?)", (topic,))
         self.topic = topic
 
