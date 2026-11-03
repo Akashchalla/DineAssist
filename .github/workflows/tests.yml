@@ -1,0 +1,62 @@
+name: Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: tests-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  python:
+    name: Python tests (${{ matrix.python-version }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # 3.10 is the version the project is developed against.
+        python-version: ["3.10", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+          cache-dependency-path: requirements.txt
+
+      # The tests never load a YOLO model (ultralytics is imported lazily inside
+      # detect_people.main), so skip ultralytics/lap and the multi-GB PyTorch
+      # download they pull in. CI machines have no display, so use the headless
+      # OpenCV build instead of the desktop one listed in requirements.txt.
+      - name: Install test dependencies
+        run: |
+          grep -v -E '^(ultralytics|lap)\b' requirements.txt \
+            | sed 's/^opencv-python\b/opencv-python-headless/' > ci-requirements.txt
+          python -m pip install --upgrade pip
+          python -m pip install -r ci-requirements.txt
+
+      - name: Run unit tests
+        run: python -m unittest discover -s tests -v
+
+  node:
+    name: Node tests and web build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Run chat API tests
+        run: npm test
+
+      - name: Build the web demo
+        run: npm run build
