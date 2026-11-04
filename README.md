@@ -1,5 +1,7 @@
 # DineAssist — restaurant table monitor (Phases 1–4)
 
+[![Tests](https://github.com/Akashchalla/DineAssist/actions/workflows/tests.yml/badge.svg)](https://github.com/Akashchalla/DineAssist/actions/workflows/tests.yml)
+
 **[Open the public evaluation demo](https://dineassist-six.vercel.app)** — A browser-only version is available in `web/`, with Vercel configuration at the repository root. See [website setup and deployment](web/README.md). It includes an interactive sample floor plan and the saved detector video; it does not connect to a live camera.
 
 DineAssist watches a dining-room camera (or a recorded video), estimates whether
@@ -18,7 +20,7 @@ have waited for a greeting, and shows it all on a host-stand dashboard.
 One command starts everything and opens the dashboard in your browser:
 
 ```bash
-cd "/Users/akashchalla/Desktop/Gator hack"
+cd DineAssist   # or wherever your copy of the project lives
 bash run_demo.sh
 ```
 
@@ -44,7 +46,7 @@ python scripts/detect_people.py --api http://127.0.0.1:8000
 ## Files
 
 ```text
-Gator hack/
+DineAssist/
 ├── requirements.txt              # Python packages for all phases
 ├── .streamlit/config.toml        # Dark dashboard theme; serves on 127.0.0.1:8501 only
 ├── scripts/
@@ -85,10 +87,12 @@ listed in `.gitignore`.
 
 ## Start here: prepare Python
 
-Run this block in your Mac's Terminal:
+Run this block in your Mac's Terminal. If you don't have the code yet, clone it
+first; otherwise just `cd` into your existing copy of the project folder:
 
 ```bash
-cd "/Users/akashchalla/Desktop/Gator hack"
+git clone https://github.com/Akashchalla/DineAssist.git
+cd DineAssist
 python3 -m venv .venv
 source .venv/bin/activate
 python -m pip install -r requirements.txt
@@ -326,6 +330,7 @@ python scripts/detect_people.py --overlap 0.30
 python scripts/detect_people.py --headless --max-frames 60 --snapshot data/output/preview.jpg --report data/output/report.json
 
 # Run all automated checks (geometry, state/API, dashboard) without downloading a model.
+# The same checks, plus `npm test` and the web build, run on GitHub for every pull request.
 python -m unittest discover -s tests -v
 
 # Return to the faster, less sensitive original inference size.
@@ -416,7 +421,7 @@ activate `.venv` and run `python -m pip install -r requirements.txt` first.
 In a terminal, run:
 
 ```bash
-cd "/Users/akashchalla/Desktop/Gator hack"
+cd DineAssist   # or wherever your copy of the project lives
 source .venv/bin/activate
 python -m uvicorn backend.api:app --host 127.0.0.1 --port 8000 --workers 1 --no-access-log
 ```
